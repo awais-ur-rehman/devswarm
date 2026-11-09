@@ -1,5 +1,7 @@
 # Contributor roadmap
 
+Browse the [contribution task index](docs/contribution-backlog.md) for the expanded backlog, grouped by area with priority and difficulty. The index links 70 initial tasks, including 17 good first issues. GitHub issues hold live status and ownership.
+
 DevSwarm is an experimental local app generator. This roadmap describes proposed
 work, not committed release dates. [Open issues](https://github.com/himanshu748/devswarm/issues)
 hold acceptance criteria and current ownership. Add an approach there before

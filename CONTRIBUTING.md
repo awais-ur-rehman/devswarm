@@ -6,6 +6,8 @@ are as useful as new agent features.
 
 ## Find a task
 
+Browse the [contribution task index](docs/contribution-backlog.md) to compare work by area, priority and difficulty. Check the linked issue for current status, dependencies and any active PR before starting.
+
 - [Good first issues](https://github.com/himanshu748/devswarm/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22) are bounded tasks with starting files and acceptance criteria.
 - [Help wanted](https://github.com/himanshu748/devswarm/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22help%20wanted%22) includes larger work that benefits from a short approach before coding.
 - [Roadmap](ROADMAP.md) explains priorities and current limitations.

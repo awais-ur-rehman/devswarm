@@ -25,7 +25,7 @@ New contributors are welcome. You can run checks and inspect the UI without a
 model token or SigNoz account.
 
 - **Start here:** [contributor guide](CONTRIBUTING.md) and [good first issues](https://github.com/himanshu748/devswarm/contribute).
-- **Choose work:** [open issues](https://github.com/himanshu748/devswarm/issues) and the [roadmap](ROADMAP.md), covering tests, accessibility, agent contracts and observability.
+- **Choose work:** the [contribution task index](docs/contribution-backlog.md), [open issues](https://github.com/himanshu748/devswarm/issues) and [roadmap](ROADMAP.md), covering tests, accessibility, agent contracts and observability.
 - **Understand the code:** [architecture](docs/architecture.md), [local development](docs/development.md) and [API examples](docs/api.md).
 - **Get help:** [support](SUPPORT.md), [Code of Conduct](CODE_OF_CONDUCT.md) and [private security reporting](SECURITY.md).
 
