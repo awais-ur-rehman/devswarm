@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "check": "node scripts/check.mjs",
+    "test": "node --test",
+    "verify": "npm run check && npm test"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -21,9 +24,22 @@
     "@opentelemetry/semantic-conventions": "^1.30.0",
     "animejs": "^4.5.0",
     "express": "^4.21.0",
-    "otel-swarm": "github:himanshu748/otel-swarm"
+    "otel-swarm": "git+https://github.com/himanshu748/otel-swarm.git#33e3843ef18e2b36fcad5a836aba0038e699d32f"
   },
   "devDependencies": {
     "playwright-core": "^1.61.1"
-  }
+  },
+  "description": "Observable multi-agent app generation with open-weight models and SigNoz",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/himanshu748/devswarm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/himanshu748/devswarm/issues"
+  },
+  "homepage": "https://github.com/himanshu748/devswarm#readme"
 }

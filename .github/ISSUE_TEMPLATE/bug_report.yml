@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible problem. Keep security details private.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Never include tokens, .env files, private prompts or raw sensitive traces. Use SECURITY.md for vulnerabilities.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, commit SHA, and whether SigNoz is configured.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal synthetic prompt or fixture if needed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and sanitized evidence
+      description: Status codes, logs, screenshots and model/provider identifiers. Remove sensitive content.
+    validations:
+      required: true

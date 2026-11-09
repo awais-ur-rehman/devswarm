@@ -9,13 +9,14 @@ DevSwarm generates full-stack apps from a prompt using a swarm of open-weight mo
 ## Run it
 
 ```sh
-npm install
-export HF_TOKEN=hf_...        # required, Hugging Face token
+npm ci
+npm run verify              # no credentials or paid calls
+export HF_TOKEN=hf_...        # required only for live model actions
 export SIGNOZ_OTLP_ENDPOINT=  # optional, e.g. http://localhost:4318; console spans if unset
-node src/server.js            # http://localhost:4100
+npm start                    # http://127.0.0.1:4100
 ```
 
-Smoke test: `curl -X POST localhost:4100/api/generate -H 'Content-Type: application/json' -d '{"prompt":"Build me a habit-tracker app"}'` (takes 3-6 min, real model calls).
+Smoke test: `curl -X POST localhost:4100/api/generate -H 'Content-Type: application/json' -d '{"prompt":"Build me a habit-tracker app"}'` (paid model calls, can take several minutes).
 
 ## Map
 
@@ -41,4 +42,11 @@ Smoke test: `curl -X POST localhost:4100/api/generate -H 'Content-Type: applicat
 - Thinking models eat small token budgets in reasoning and return empty content with `finish: length`. max_tokens is 32768 for a reason.
 - Provider response shapes differ: `content` can be a string, an array of parts, or null with the output in `reasoning_content`. llm.js handles all three; do not bypass it.
 - The server does not hot-reload. Restart after edits before re-testing.
-- Generated apps run `server.js` standalone via a symlinked node_modules; the browser preview is static (frontend falls back to localStorage when its API is absent).
+- Generated apps resolve dependencies from the parent node_modules. Live previews spawn their generated backend; if it cannot start, the static frontend can fall back to localStorage. Child processes are not sandboxed.
+
+## Contributor workflow
+
+Read CONTRIBUTING.md for setup, PR scope and validation. Run `npm run verify`
+and `git diff --check` before submitting behavior changes. Default tests must
+not require real credentials or paid calls. Keep server access local; generated
+child processes are not sandboxed. See SECURITY.md and docs/architecture.md.

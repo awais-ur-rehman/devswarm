@@ -1,6 +1,33 @@
 # DevSwarm
 
-DevSwarm turns one prompt into a working full-stack app. Five specialist open-weight models plan it, build it, review it and repair their own routing, and every step is an OpenTelemetry span in SigNoz, including the steps that go wrong. Generated apps are born observable: each one ships with its own OTel bootstrap and reports to SigNoz under its own service name seconds after it exists. The swarm watches itself, and everything it builds.
+[![Contributor checks](https://github.com/himanshu748/devswarm/actions/workflows/ci.yml/badge.svg)](https://github.com/himanshu748/devswarm/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js 22+](https://img.shields.io/badge/Node.js-22%2B-43853d.svg)](package.json)
+[![Good first issues](https://img.shields.io/github/issues/himanshu748/devswarm/good%20first%20issue)](https://github.com/himanshu748/devswarm/contribute)
+
+**Build an app with specialist agents. See why each step succeeded or failed.**
+
+DevSwarm turns a prompt into a full-stack app using open-weight models for
+planning, frontend, backend and critic review. A fifth role, Swarm Doctor,
+diagnoses routing health from telemetry. Every agent and model call is traced
+with OpenTelemetry; generated apps also ship with instrumentation for SigNoz.
+
+**Status: experimental local development software.** Generated code and critic
+verdicts need human review. Live previews run model-written code with your OS
+user's privileges. Read [SECURITY.md](SECURITY.md) before generating or previewing
+an app, and keep the server local.
+
+![DevSwarm Mission Control](docs/blog-images/mission-control.png)
+
+## Contribute
+
+New contributors are welcome. You can run checks and inspect the UI without a
+model token or SigNoz account.
+
+- **Start here:** [contributor guide](CONTRIBUTING.md) and [good first issues](https://github.com/himanshu748/devswarm/contribute).
+- **Choose work:** [open issues](https://github.com/himanshu748/devswarm/issues) and the [roadmap](ROADMAP.md), covering tests, accessibility, agent contracts and observability.
+- **Understand the code:** [architecture](docs/architecture.md), [local development](docs/development.md) and [API examples](docs/api.md).
+- **Get help:** [support](SUPPORT.md), [Code of Conduct](CODE_OF_CONDUCT.md) and [private security reporting](SECURITY.md).
 
 Built for the Agents of SigNoz hackathon by WeMakeDevs (July 20 to 26, 2026), Track 1: AI and Agent Observability.
 
@@ -8,23 +35,25 @@ The hackathon's two required files are [`observability/casting.yaml`](observabil
 
 ## Run it on your laptop
 
-You need Node 22 or newer and a Hugging Face token. SigNoz is optional for a first run.
+You need Git and Node 22 or newer. A Hugging Face token is needed for live
+generation, refinement and Doctor diagnosis. SigNoz is optional for a first run.
 
 ```sh
 git clone https://github.com/himanshu748/devswarm.git
 cd devswarm
-npm install
-cp .env.example .env          # then put your token in HF_TOKEN
+npm ci
+npm run verify                # no token, no paid calls
+cp .env.example .env          # optional until generation; set HF_TOKEN
 npm start                     # http://localhost:4100
 ```
 
-That is the whole setup. Without `SIGNOZ_OTLP_ENDPOINT` set, spans print to the console and the swarm works normally; you just do not get dashboards. `npm start` loads `.env` automatically.
+Open http://127.0.0.1:4100. The server binds to loopback by default. Without `SIGNOZ_OTLP_ENDPOINT` set, spans print to the console; dashboards, trace statistics and Doctor health queries need SigNoz. `npm start` loads `.env` automatically.
 
 What you can do straight away:
 
 - `/` the landing page. Its statistics come from SigNoz when it is connected, and fall back to static numbers when it is not.
 - `/app` Mission Control: the swarm graph, a live span stream, the hangar of everything built so far, and the Swarm Doctor.
-- Type a prompt and press Dispatch. A generation takes 4 to 20 minutes and costs roughly 20 to 60 cents in tokens, because these are real model calls.
+- Type a prompt and press Dispatch. Generation makes paid model calls. Historical runs took 4 to 20 minutes and roughly $0.20 to $0.60; current cost and latency depend on providers, token usage and retries.
 
 Two things that need more than a token:
 
@@ -53,12 +82,15 @@ In Mission Control, hit **Refine** on any card in the hangar.
 | role | primary | fallback |
 | --- | --- | --- |
 | planner | GLM-5.2 | Qwen3.6-35B-A3B |
-| frontend | GLM-5.2 (thinking disabled) | Kimi-K2.6 |
+| frontend | GLM-5.2 (thinking disabled) | Kimi-K2.7-Code |
 | backend | Qwen3-Coder-480B | Kimi-K2.7-Code |
 | critic | Kimi-K2.7-Code | DeepSeek-V4-Flash |
 | doctor | GLM-5.2 | Qwen3.6-35B-A3B |
 
-All open weights, served through Hugging Face Inference Providers. Zero closed-model API calls.
+The checked-in routing table uses open-weight models served through Hugging Face
+Inference Providers. Provider availability, access and pricing can change.
+`src/models.js` is the source of truth; its historical measurements are not a
+current availability guarantee.
 
 Two entries in `src/models.js` are load-bearing and worth reading the comments on. GLM-5.2 is **pinned to one provider** because the router load-balances it across seven whose `max_completion_tokens` ceilings disagree, from 16384 to over 200000, and an unpinned request fails outright whenever it lands on the strict one. Thinking is **disabled for the frontend role only**, because with it on GLM spends about two thirds of its budget reasoning and truncates full-page HTML.
 
@@ -72,7 +104,7 @@ All three signals go to SigNoz:
 - **Metrics**: token, call, fallback, catch, generation and refinement counters, plus an LLM latency histogram, labelled by role and model.
 - **Logs**: structured records for fallbacks, doctor diagnoses and generation verdicts.
 
-Four dashboards and two alert rules live in `observability/`. The instrumentation layer is extracted as a standalone library, [otel-swarm](https://github.com/himanshu748/otel-swarm), which DevSwarm consumes as a real dependency.
+Five dashboards and two alert rules live in `observability/`. The instrumentation layer is extracted as a standalone library, [otel-swarm](https://github.com/himanshu748/otel-swarm), which DevSwarm consumes as a real dependency.
 
 ### Self-healing
 
@@ -91,7 +123,7 @@ A SigNoz alert (fallback spike, or critic catch-rate flatline) posts to `/api/do
 | POST | `/api/doctor/run` | run a diagnosis on demand |
 | GET | `/preview/:id/` | the generated app, running for real |
 
-Previews are live. The generated Express server runs as a child process and requests are proxied to it, so its API and its traces are real. Children get an allowlisted environment, never the parent's secrets.
+Previews are live. The generated Express server runs as a child process and requests are proxied to it. Children receive an allowlisted environment, but retain the host user's filesystem and network privileges. This is not process isolation. Previews also share the DevSwarm browser origin. See [the security boundary](SECURITY.md).
 
 ## Repo map
 
@@ -106,3 +138,10 @@ Previews are live. The generated Express server runs as a child process and requ
 The write-up is [BLOG.md](BLOG.md), and it is mostly about being wrong: a stale constant we blamed on a model, a provider limit we blamed on the model, a review gate we assumed was our strongest link, and a design system we were sure was helping that measurably was not. Every one of those was found by telemetry contradicting us rather than by reading the code again.
 
 DevSwarm was built with Claude Code.
+
+## License
+
+DevSwarm is [MIT licensed](LICENSE). Third-party dependencies retain their own
+licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Model weights and
+provider services have separate terms. This repository's license does not grant
+rights to provider services or guarantee the licensing of generated output.

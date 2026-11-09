@@ -240,7 +240,8 @@ app.use((err, _req, res, _next) => {
 });
 
 const port = process.env.PORT || 4100;
-app.listen(port, () => console.log(`DevSwarm on http://localhost:${port}`));
+const host = process.env.HOST || '127.0.0.1';
+app.listen(port, host, () => console.log(`DevSwarm on http://${host}:${port}`));
 
 for (const sig of ['SIGINT', 'SIGTERM']) {
   process.on(sig, () => { stopAll(); process.exit(0); });

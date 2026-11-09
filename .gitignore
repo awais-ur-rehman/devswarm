@@ -12,3 +12,10 @@ DEMO-SCRIPT.md
 docs/blog-images/web/
 # abandoned TTS voiceover attempt, demo is recorded by hand
 assets/voice/
+
+# Local credentials and test artifacts
+.env.*
+!.env.example
+coverage/
+playwright-report/
+test-results/

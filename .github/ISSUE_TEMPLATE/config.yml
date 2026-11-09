@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Private security report
+    url: https://github.com/himanshu748/devswarm/blob/main/SECURITY.md
+    about: Read the private reporting route before sharing vulnerability details.
+  - name: Contributor setup and available work
+    url: https://github.com/himanshu748/devswarm/blob/main/CONTRIBUTING.md
+    about: Set up your fork, run checks, and find a first issue.

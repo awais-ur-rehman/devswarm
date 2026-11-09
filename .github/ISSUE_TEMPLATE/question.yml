@@ -1,0 +1,15 @@
+name: Setup or usage question
+description: Get help with local setup or an existing feature.
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Explain your goal and what you have already tried. Do not paste credentials.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and sanitized output
+      description: Include OS, Node version and commit if relevant.
